@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>入梦谣｜Lullaby for Daiyu</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar" aria-label="游戏状态">
+        <div>
+          <p class="kicker" id="topKicker">入梦谣 · Lullaby for Daiyu</p>
+          <h1 id="mainTitle">香魂一缕随风散，愁绪三更入梦——</h1>
+        </div>
+        <div class="status-pill" id="statusLine">21:01｜剩余对话 6/6｜黛玉气息 55/100</div>
+      </section>
+
+      <section class="game-board" aria-label="聊天区域">
+        <div class="chat-flow" id="chatFlow" aria-live="polite"></div>
+      </section>
+
+      <section class="composer" aria-label="输入">
+        <textarea
+          id="playerInput"
+          rows="2"
+          maxlength="240"
+          placeholder="对黛玉说些什么。"
+        ></textarea>
+        <button id="sendButton" type="button">发送</button>
+      </section>
+
+      <button class="system-fab" id="systemButton" type="button" aria-label="打开系统面板">
+        系统
+        <span class="badge" id="systemBadge">1</span>
+      </button>
+
+      <button class="language-fab" id="languageButton" type="button" aria-label="切换语言">EN</button>
+
+      <aside class="system-panel intro-active" id="systemPanel" aria-label="系统面板" aria-hidden="true">
+        <div class="panel-head">
+          <div>
+            <p class="kicker" id="systemKicker">快穿系统</p>
+            <h2 id="panelChapter">第一章｜焚稿断情</h2>
+          </div>
+          <button class="icon-button" id="closePanel" type="button" aria-label="关闭系统面板">×</button>
+        </div>
+        <dl class="panel-list">
+          <div>
+            <dt>当前任务</dt>
+            <dd id="panelTask">陪黛玉度过焚稿之夜，引导她察觉循环，并开始追问自己究竟是谁。</dd>
+          </div>
+          <div>
+            <dt>当前状态</dt>
+            <dd id="panelStatus">21:01｜剩余对话 6/6｜黛玉气息 55/100</dd>
+          </div>
+        </dl>
+        <section class="intro-card" id="introCard">
+          <div class="intro-head">
+            <p class="kicker" id="introKicker">系统说明</p>
+          </div>
+          <p id="introBody">
+            林黛玉被困在《红楼梦》的循环里。每当书页重新翻开，她便再次醒来，走向同一场焚稿、病逝与误解。你的任务不是强行改写本轮死亡，而是在最后一程中唤醒她：让她明白自己活在一本书里，所受之苦并非她的错，而是早已写好的剧情。
+          </p>
+          <div class="intro-grid">
+            <div>
+              <span id="introTimeTitle">当前时间</span>
+              <p id="introTimeText">21:01｜亥时。时间会随回合向前推进，提示原著事件正在逼近。</p>
+            </div>
+            <div>
+              <span id="introTurnsTitle">剩余对话</span>
+              <p id="introTurnsText">你还剩多少次主要发言。每发送一次给黛玉的话，都会消耗 1 回合。</p>
+            </div>
+            <div>
+              <span id="introBreathTitle">黛玉气息</span>
+              <p id="introBreathText">她当前的体力与精神。气息越低，回应越短；低于 30 时可能只能给出动作反应。</p>
+            </div>
+            <div>
+              <span id="introTrustTitle">信任</span>
+              <p id="introTrustText">她有多相信你，是否愿意把最后的脆弱交给你听。</p>
+            </div>
+            <div>
+              <span id="introAwarenessTitle">觉察</span>
+              <p id="introAwarenessText">她有多意识到自己是书中人、命运为何反复重演。</p>
+            </div>
+            <div>
+              <span id="introAgencyTitle">自主</span>
+              <p id="introAgencyText">她有多少勇气面对真相，并试着从既定剧情中挣脱。</p>
+            </div>
+            <div class="intro-wide">
+              <span id="introSystemChatTitle">系统对话</span>
+              <p id="introSystemChatText">你可以在下方和系统自由对话，询问背景、状态或吐槽它。系统只对你说话，不会被黛玉听见。</p>
+            </div>
+          </div>
+          <button class="secondary-button" id="dismissIntro" type="button">我明白了</button>
+        </section>
+        <div class="meter-grid" aria-label="核心数值">
+          <div>
+            <span>信任</span>
+            <strong id="trustValue">10</strong>
+          </div>
+          <div>
+            <span>觉察</span>
+            <strong id="awarenessValue">5</strong>
+          </div>
+          <div>
+            <span>自主</span>
+            <strong id="agencyValue">3</strong>
+          </div>
+        </div>
+        <div class="system-chat">
+          <div class="system-log" id="systemLog" aria-live="polite">
+            <div class="system-chat-row system">
+              <span>系统</span>
+              <p>宿主，绑定已完成。别急着问我是不是靠谱，我通常靠谱，偶尔甩锅。</p>
+            </div>
+          </div>
+          <div class="system-ask">
+            <input id="systemQuestionInput" type="text" autocomplete="off" placeholder="和系统说话..." />
+            <button id="askSystemButton" type="button">发</button>
+          </div>
+        </div>
+      </aside>
+
+      <aside class="settings-panel hidden" id="settingsPanel" aria-label="模型设置" aria-hidden="true">
+        <div class="panel-head">
+          <div>
+            <p class="kicker" id="settingsKicker">模型设置</p>
+            <h2 id="settingsTitle">对话模型</h2>
+          </div>
+          <button class="icon-button" id="closeSettingsPanel" type="button" aria-label="关闭模型设置">×</button>
+        </div>
+        <dl class="panel-list">
+          <div>
+            <dt id="modelStatusLabel">当前模型</dt>
+            <dd id="panelModel">本地生成器</dd>
+          </div>
+        </dl>
+        <form class="model-form" id="modelForm">
+          <label>
+            <span>Base URL</span>
+            <input id="baseUrlInput" type="url" autocomplete="off" placeholder="https://api.deepseek.com" />
+          </label>
+          <label>
+            <span>API Key</span>
+            <input id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-..." />
+          </label>
+          <label>
+            <span>Model</span>
+            <input id="modelInput" type="text" autocomplete="off" placeholder="deepseek-chat" />
+          </label>
+          <div class="model-actions">
+            <button class="secondary-button compact" id="saveModelSettings" type="submit">保存模型设置</button>
+            <button class="ghost-button" id="testModelSettings" type="button">测试</button>
+          </div>
+          <button class="ghost-button wide" id="clearModelSettings" type="button">清除模型设置</button>
+        </form>
+      </aside>
+
+      <div class="boot-overlay" id="bootOverlay" aria-hidden="true">
+        <div class="boot-card">
+          <div class="boot-lines" id="bootLines"></div>
+        </div>
+      </div>
+
+      <div class="chapter-modal" id="chapterModal" aria-hidden="true">
+        <div class="chapter-card">
+          <p id="chapterNumber">第二章</p>
+          <h2 id="chapterTitle">卧榻弥留</h2>
+          <span id="chapterMeta">宝玉成亲当日・辰时至申时｜潇湘馆</span>
+          <button id="continueChapter" type="button">继续</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
